@@ -1,0 +1,10 @@
+# Build & cache
+.next/
+node_modules/
+.turbo/
+
+# Env
+.env*.local
+
+# OS
+.DS_Store
