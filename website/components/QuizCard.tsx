@@ -144,21 +144,6 @@ export function QuizCard() {
             outline: "none",
           }}
         >
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: 18,
-              height: 18,
-              borderRadius: "9999px",
-              border: "2px solid rgba(255,255,255,0.9)",
-              marginRight: 2,
-              fontSize: 10,
-            }}
-          >
-            🔍
-          </span>
           <span>Rechercher</span>
         </button>
       </div>
