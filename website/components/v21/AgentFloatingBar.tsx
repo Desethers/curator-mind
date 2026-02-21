@@ -24,7 +24,7 @@ function getArtworkPlaceholders(_entityName: string) {
 
 function getGalleryPlaceholders(_entityName: string) {
   return [
-    "On peut entrer sans intention d'acheter ?",
+    "On peut entrer librement ?",
     "Qu'est-ce qu'on dit en arrivant ?",
     "C'est intimidant comme galerie ?",
     "Qu'est-ce que je dois savoir avant d'y aller ?",
@@ -34,8 +34,8 @@ function getGalleryPlaceholders(_entityName: string) {
 const COLLECTION_PLACEHOLDERS = [
   "Ces œuvres ont-elles quelque chose en commun ?",
   "Est-ce que j'ai un style ?",
-  "Laquelle achèterait quelqu'un comme moi ?",
-  "Suis-je prêt pour ma première acquisition ?",
+  "Qu'est-ce qui relie ces œuvres ?",
+  "En parler avec Curateur",
 ];
 
 function getPlaceholders(

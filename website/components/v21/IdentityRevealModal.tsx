@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { useAppStateV21 } from "../../context/AppStateContextV21";
 import { theme } from "../../lib/theme";
+import { IdentityRevealConfetti } from "./IdentityRevealConfetti";
 
 const t = theme;
 
@@ -12,13 +14,18 @@ export function IdentityRevealModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const { collectorProfile } = useAppStateV21();
+  const { collectorProfile, recordIdentityRevealed } = useAppStateV21();
   const { identity, keywords, bridge } = collectorProfile;
+
+  useEffect(() => {
+    if (open) recordIdentityRevealed();
+  }, [open, recordIdentityRevealed]);
 
   if (!open) return null;
 
   return (
     <>
+      <IdentityRevealConfetti active={open} />
       <div
         role="presentation"
         onClick={onClose}

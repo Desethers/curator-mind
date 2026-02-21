@@ -34,7 +34,6 @@ export function ExplorerSearchBar({ onOpenQuiz }: { onOpenQuiz: () => void }) {
         marginBottom: 28,
       }}
     >
-      {/* Où */}
       <Link
         href="/v2.1/galeries"
         style={{
@@ -62,30 +61,6 @@ export function ExplorerSearchBar({ onOpenQuiz }: { onOpenQuiz: () => void }) {
         </div>
       </Link>
 
-      {/* Quand */}
-      <div
-        style={{
-          flex: 1,
-          minWidth: 0,
-          padding: "16px 20px",
-          borderRight: `1px solid ${t.colors.accentBorder}`,
-        }}
-      >
-        <div
-          style={{
-            fontSize: 10,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            color: t.colors.inkMuted,
-            marginBottom: 4,
-          }}
-        >
-          Quand
-        </div>
-        <div style={{ fontSize: 15, color: t.colors.inkMuted }}>Quand ?</div>
-      </div>
-
-      {/* Profil — Quiz (clic pour ouvrir) */}
       <button
         type="button"
         onClick={onOpenQuiz}
@@ -120,40 +95,8 @@ export function ExplorerSearchBar({ onOpenQuiz }: { onOpenQuiz: () => void }) {
         >
           {profileComplete && identity
             ? identityToTwoWords(identity)
-            : "3 questions pour personnaliser"}
+            : "Affiner mon profil"}
         </div>
-      </button>
-
-      {/* Bouton Rechercher / Explorer */}
-      <button
-        type="button"
-        onClick={onOpenQuiz}
-        aria-label="Personnaliser votre exploration"
-        style={{
-          width: 56,
-          flexShrink: 0,
-          border: "none",
-          backgroundColor: t.colors.accent,
-          color: t.colors.white,
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="m21 21-4.35-4.35" />
-        </svg>
       </button>
     </div>
   );

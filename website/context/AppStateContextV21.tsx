@@ -55,6 +55,7 @@ export interface AgentState {
   memory: AgentMemory;
   suggestedChips: string[];
   preloadQuestion: string | null;
+  postVisitRitual: boolean;
 }
 
 export interface CollectorProfile {
@@ -64,6 +65,18 @@ export interface CollectorProfile {
   implicitSignals: ImplicitSignal[];
   quizAnswers: string[];
   profileComplete: boolean;
+  onboardingComplete: boolean;
+}
+
+export interface JourneyState {
+  onboardingComplete: boolean;
+  firstSaveAt: number | null;
+  totalSaves: number;
+  visitKitOpenedFor: string[];
+  identityRevealed: boolean;
+  postVisitGalleries: string[];
+  firstSaveToastShown: boolean;
+  fifthSaveToastShown: boolean;
 }
 
 interface AppStateV21 {
@@ -72,6 +85,7 @@ interface AppStateV21 {
   savedArtworks: Artwork[];
   savedGalleries: V2Gallery[];
   agent: AgentState;
+  journey: JourneyState;
 }
 
 const STORAGE_KEY = "curator-mind-v21-state";
@@ -83,6 +97,18 @@ const defaultProfile: CollectorProfile = {
   implicitSignals: [],
   quizAnswers: [],
   profileComplete: false,
+  onboardingComplete: false,
+};
+
+const defaultJourney: JourneyState = {
+  onboardingComplete: false,
+  firstSaveAt: null,
+  totalSaves: 0,
+  visitKitOpenedFor: [],
+  identityRevealed: false,
+  postVisitGalleries: [],
+  firstSaveToastShown: false,
+  fifthSaveToastShown: false,
 };
 
 const defaultAgentState: AgentState = {
@@ -98,6 +124,7 @@ const defaultAgentState: AgentState = {
   },
   suggestedChips: [],
   preloadQuestion: null,
+  postVisitRitual: false,
 };
 
 const defaultState: AppStateV21 = {
@@ -106,6 +133,7 @@ const defaultState: AppStateV21 = {
   savedArtworks: [],
   savedGalleries: [],
   agent: defaultAgentState,
+  journey: defaultJourney,
 };
 
 function loadState(): AppStateV21 {
@@ -122,6 +150,7 @@ function loadState(): AppStateV21 {
           ...parsed.agent,
           memory: { ...defaultAgentState.memory, ...parsed.agent.memory },
           preloadQuestion: (parsed.agent as AgentState).preloadQuestion ?? null,
+          postVisitRitual: (parsed.agent as AgentState).postVisitRitual ?? false,
         }
       : {
           ...defaultAgentState,
@@ -133,7 +162,8 @@ function loadState(): AppStateV21 {
     return {
       ...defaultState,
       ...parsed,
-      collectorProfile: { ...defaultProfile, ...parsed.collectorProfile },
+      collectorProfile: { ...defaultProfile, ...parsed.collectorProfile, onboardingComplete: (parsed.collectorProfile as CollectorProfile)?.onboardingComplete ?? parsed.collectorProfile?.profileComplete ?? false },
+      journey: { ...defaultJourney, ...(parsed as AppStateV21).journey },
       agent: migratedAgent,
     };
   } catch {
@@ -171,12 +201,20 @@ type ContextValue = AppStateV21 & {
   setAgentMemory: (update: Partial<AgentMemory> | ((prev: AgentMemory) => AgentMemory)) => void;
   setSuggestedChips: (chips: string[]) => void;
   setAgentPreloadQuestion: (q: string | null) => void;
+  setAgentPostVisitRitual: (v: boolean) => void;
   setAgentHistory: (history: Message[] | ((prev: Message[]) => Message[])) => void;
   appendAgentMessage: (msg: Message) => void;
   updateAgentMessage: (id: string, content: string) => void;
   signalsUntilProfile: () => number;
   dominantKeywordCluster: () => string | null;
   shouldShowQuizTrigger: () => boolean;
+  recordFirstSave: () => void;
+  recordVisitKitOpened: (galleryId: string) => void;
+  recordIdentityRevealed: () => void;
+  recordPostVisitGallery: (galleryName: string) => void;
+  completeOnboardingWithSignals: (signals: ImplicitSignal[]) => void;
+  markFirstSaveToastShown: () => void;
+  markFifthSaveToastShown: () => void;
 };
 
 const AppStateContextV21 = createContext<ContextValue | null>(null);
@@ -199,7 +237,12 @@ export function AppStateProviderV21({ children }: { children: ReactNode }) {
   }, [state, hydrated]);
 
   const setHasCompletedOnboarding = useCallback((v: boolean) => {
-    setState((s) => ({ ...s, hasCompletedOnboarding: v }));
+    setState((s) => ({
+      ...s,
+      hasCompletedOnboarding: v,
+      journey: { ...s.journey, onboardingComplete: v },
+      collectorProfile: { ...s.collectorProfile, onboardingComplete: v },
+    }));
   }, []);
 
   const addImplicitSignal = useCallback((signal: Omit<ImplicitSignal, "at">) => {
@@ -241,11 +284,18 @@ export function AppStateProviderV21({ children }: { children: ReactNode }) {
   const toggleSavedArtwork = useCallback((artwork: Artwork) => {
     setState((s) => {
       const exists = s.savedArtworks.some((a) => a.id === artwork.id);
+      const newSaves = exists
+        ? s.savedArtworks.filter((a) => a.id !== artwork.id)
+        : [...s.savedArtworks, artwork];
+      const totalSaves = newSaves.length;
+      const journey = { ...s.journey, totalSaves };
+      if (!exists && !s.journey.firstSaveAt) {
+        journey.firstSaveAt = Date.now();
+      }
       return {
         ...s,
-        savedArtworks: exists
-          ? s.savedArtworks.filter((a) => a.id !== artwork.id)
-          : [...s.savedArtworks, artwork],
+        savedArtworks: newSaves,
+        journey,
       };
     });
   }, []);
@@ -307,6 +357,10 @@ export function AppStateProviderV21({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, agent: { ...s.agent, preloadQuestion } }));
   }, []);
 
+  const setAgentPostVisitRitual = useCallback((postVisitRitual: boolean) => {
+    setState((s) => ({ ...s, agent: { ...s.agent, postVisitRitual } }));
+  }, []);
+
   const setAgentHistory = useCallback(
     (history: Message[] | ((prev: Message[]) => Message[])) => {
       setState((s) => ({
@@ -361,6 +415,54 @@ export function AppStateProviderV21({ children }: { children: ReactNode }) {
     return dominantKeywordCluster() !== null;
   }, [state.collectorProfile.profileComplete, dominantKeywordCluster]);
 
+  const recordFirstSave = useCallback(() => {
+    setState((s) => {
+      if (s.journey.firstSaveAt) return s;
+      return { ...s, journey: { ...s.journey, firstSaveAt: Date.now(), totalSaves: Math.max(s.journey.totalSaves, 1) } };
+    });
+  }, []);
+
+  const recordVisitKitOpened = useCallback((galleryId: string) => {
+    setState((s) => {
+      if (s.journey.visitKitOpenedFor.includes(galleryId)) return s;
+      return { ...s, journey: { ...s.journey, visitKitOpenedFor: [...s.journey.visitKitOpenedFor, galleryId] } };
+    });
+  }, []);
+
+  const recordIdentityRevealed = useCallback(() => {
+    setState((s) => {
+      if (s.journey.identityRevealed) return s;
+      return { ...s, journey: { ...s.journey, identityRevealed: true } };
+    });
+  }, []);
+
+  const recordPostVisitGallery = useCallback((galleryName: string) => {
+    setState((s) => {
+      if (s.journey.postVisitGalleries.includes(galleryName)) return s;
+      return { ...s, journey: { ...s.journey, postVisitGalleries: [...s.journey.postVisitGalleries, galleryName] } };
+    });
+  }, []);
+
+  const completeOnboardingWithSignals = useCallback((signals: ImplicitSignal[]) => {
+    setState((s) => ({
+      ...s,
+      hasCompletedOnboarding: true,
+      collectorProfile: {
+        ...s.collectorProfile,
+        implicitSignals: [...s.collectorProfile.implicitSignals, ...signals.map((sig) => ({ ...sig, at: sig.at ?? Date.now() }))],
+        onboardingComplete: true,
+      },
+      journey: { ...s.journey, onboardingComplete: true },
+    }));
+  }, []);
+
+  const markFirstSaveToastShown = useCallback(() => {
+    setState((s) => ({ ...s, journey: { ...s.journey, firstSaveToastShown: true } }));
+  }, []);
+  const markFifthSaveToastShown = useCallback(() => {
+    setState((s) => ({ ...s, journey: { ...s.journey, fifthSaveToastShown: true } }));
+  }, []);
+
   const value: ContextValue = {
     ...state,
     agentHistory: state.agent.history,
@@ -378,12 +480,20 @@ export function AppStateProviderV21({ children }: { children: ReactNode }) {
     setAgentMemory,
     setSuggestedChips,
     setAgentPreloadQuestion,
+    setAgentPostVisitRitual,
     setAgentHistory,
     appendAgentMessage,
     updateAgentMessage,
     signalsUntilProfile,
     dominantKeywordCluster,
     shouldShowQuizTrigger,
+    recordFirstSave,
+    recordVisitKitOpened,
+    recordIdentityRevealed,
+    recordPostVisitGallery,
+    completeOnboardingWithSignals,
+    markFirstSaveToastShown,
+    markFifthSaveToastShown,
   };
 
   return (

@@ -1,11 +1,11 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
 import { useAppStateV21 } from "../../../../context/AppStateContextV21";
 import { V2_GALLERIES } from "../../../../lib/v2-galleries";
 import { theme } from "../../../../lib/theme";
 import { agentTheme } from "../../../../lib/agent-theme";
+import { VisitKit } from "../../../../components/v21/VisitKit";
 
 const t = theme;
 const at = agentTheme;
@@ -15,7 +15,16 @@ export default function GalerieDetailPage() {
   const router = useRouter();
   const id = String(params.id ?? "");
   const gallery = V2_GALLERIES[id] || V2_GALLERIES.perrotin;
-  const { addSavedGallery, setAgentContext, setAgentOpen, setAgentPreloadQuestion } = useAppStateV21();
+  const {
+    addSavedGallery,
+    setAgentContext,
+    setAgentOpen,
+    setAgentPreloadQuestion,
+    setAgentHistory,
+    setAgentPostVisitRitual,
+    recordPostVisitGallery,
+    journey,
+  } = useAppStateV21();
 
   const openCurateurForVisit = () => {
     setAgentContext({
@@ -26,6 +35,21 @@ export default function GalerieDetailPage() {
       description: gallery.exhibition,
     });
     setAgentPreloadQuestion(`Je visite ${gallery.name} bientôt.`);
+    setAgentOpen(true);
+  };
+
+  const openRaconterVisite = () => {
+    recordPostVisitGallery(gallery.name);
+    setAgentContext({
+      screen: "gallery",
+      entityId: gallery.id,
+      entityName: gallery.name,
+      entityType: "gallery",
+      description: gallery.exhibition,
+    });
+    setAgentHistory([]);
+    setAgentPreloadQuestion(`Je reviens de ${gallery.name}. Qu'est-ce que vous avez ressenti ?`);
+    setAgentPostVisitRitual(true);
     setAgentOpen(true);
   };
 
@@ -72,6 +96,18 @@ export default function GalerieDetailPage() {
         >
           {gallery.name}
         </h1>
+        {gallery.monthlyVisitors != null && (
+          <p
+            style={{
+              fontFamily: t.fonts.sans,
+              fontSize: 12,
+              color: t.colors.inkMuted,
+              margin: "0 0 8px",
+            }}
+          >
+            {gallery.monthlyVisitors} membres Curator Mind ont visité ce mois-ci
+          </p>
+        )}
         <p
           style={{
             fontFamily: t.fonts.serif,
@@ -86,6 +122,13 @@ export default function GalerieDetailPage() {
         <p style={{ fontSize: 14, color: t.colors.inkMuted, lineHeight: 1.5, margin: "0 0 24px" }}>
           {gallery.matchReason}
         </p>
+        {gallery.visitKit && (
+          <VisitKit
+            gallery={gallery}
+            onRaconterVisite={openRaconterVisite}
+            isFirstOpen={journey.visitKitOpenedFor.length === 0}
+          />
+        )}
         <section style={{ marginBottom: 24 }}>
           <h2
             style={{
@@ -174,7 +217,7 @@ export default function GalerieDetailPage() {
               textAlign: "center",
             }}
           >
-            ◈ Préparer avec Curateur →
+            ◈ En parler avec Curateur →
           </button>
         </div>
       </div>

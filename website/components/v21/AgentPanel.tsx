@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from "react";
 import { agentTheme } from "../../lib/agent-theme";
+import { theme } from "../../lib/theme";
 import { AgentContextIndicator } from "./AgentContextIndicator";
 import { AgentMessageBubble } from "./AgentMessageBubble";
 import { AgentSuggestedChips } from "./AgentSuggestedChips";
@@ -9,6 +10,7 @@ import type { Message } from "../../context/AppStateContextV21";
 import type { AgentContext } from "../../context/AppStateContextV21";
 
 const at = agentTheme;
+const t = theme;
 
 function formatDateSeparator(atMs: number): string {
   const d = new Date(atMs);
@@ -31,6 +33,7 @@ export function AgentPanel({
   onInputChange,
   onSubmit,
   onDragDown,
+  postVisitRitual,
 }: {
   context: AgentContext | null;
   onDismissContext: () => void;
@@ -42,6 +45,7 @@ export function AgentPanel({
   onInputChange: (v: string) => void;
   onSubmit: () => void;
   onDragDown: () => void;
+  postVisitRitual?: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -72,8 +76,8 @@ export function AgentPanel({
   return (
     <div
       style={{
-        height: "85vh",
-        maxHeight: "85vh",
+        height: "65vh",
+        maxHeight: "65vh",
         display: "flex",
         flexDirection: "column",
         background: at.colors.bg,
@@ -130,14 +134,14 @@ export function AgentPanel({
               justifyContent: "center",
               padding: 24,
               textAlign: "center",
-              fontFamily: at.fonts.serif,
-              fontSize: 22,
+              fontFamily: postVisitRitual ? t.fonts.serif : at.fonts.serif,
+              fontSize: postVisitRitual ? 20 : 22,
               fontStyle: "italic",
               color: at.colors.inkSoft,
               lineHeight: 1.5,
             }}
           >
-            Qu&apos;est-ce qui vous a amené ici aujourd&apos;hui ?
+            {postVisitRitual ? "Alors — qu'est-ce que vous avez ressenti ?" : "Qu'est-ce qui vous a amené ici aujourd'hui ?"}
           </div>
         )}
         {messageBlocks.map((block, bi) => (
@@ -176,7 +180,7 @@ export function AgentPanel({
       </div>
 
       <div style={{ padding: "0 16px 16px", flexShrink: 0 }}>
-        <AgentSuggestedChips chips={suggestedChips} onSelectChip={onSelectChip} />
+        {!postVisitRitual && <AgentSuggestedChips chips={suggestedChips} onSelectChip={onSelectChip} />}
         <form
           onSubmit={(e) => {
             e.preventDefault();

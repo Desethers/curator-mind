@@ -78,6 +78,49 @@
   animation: agentPanelSlideUp 300ms cubic-bezier(0.32, 0.72, 0, 1) forwards;
 }
 
+@keyframes valueTeaserFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.v21-thread-scroll {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.v21-thread-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes journeyToastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.journey-toast-enter {
+  animation: journeyToastSlideUp 280ms ease-out forwards;
+}
+
+@keyframes identityConfettiExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  40% {
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(12);
+    opacity: 0;
+  }
+}
+
 @media (min-width: 768px) {
   .agent-memory-sidebar {
     display: block !important;

@@ -208,6 +208,24 @@ export function ArtworkCard({
             {artwork.artist}
           </div>
           <div style={{ fontSize: 12, color: t.colors.inkSoft }}>{artwork.gallery}</div>
+          {artwork.socialProof && (
+            <div
+              style={{
+                fontFamily: t.fonts.sans,
+                fontSize: 11,
+                color: "rgba(255,255,255,0.5)",
+                marginTop: 4,
+              }}
+            >
+              {(() => {
+                const sp = artwork.socialProof;
+                const variant = artwork.id % 3;
+                if (variant === 0) return `${sp.saves} collectionneurs ont sauvegardé cette œuvre`;
+                if (variant === 1) return `Vu ${sp.weeklyViews} fois cette semaine`;
+                return `${sp.similarProfiles} profils similaires au vôtre suivent cet artiste`;
+              })()}
+            </div>
+          )}
         </div>
         {/* Price bottom-right */}
         <div

@@ -132,11 +132,16 @@ export async function POST(req: NextRequest) {
     last4Messages: last4,
   });
 
+  const normalizedMessages = (messages || []).map((m: { role: string; content: string }) => ({
+    role: m.role === "assistant" ? ("assistant" as const) : ("user" as const),
+    content: m.content,
+  }));
+
   const stream = await client.messages.stream({
     model: "claude-sonnet-4-6",
     max_tokens: 300,
     system,
-    messages: messages || [],
+    messages: normalizedMessages,
   });
 
   const readable = new ReadableStream({

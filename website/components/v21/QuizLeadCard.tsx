@@ -46,7 +46,7 @@ export function QuizLeadCard({ onOpenQuiz }: { onOpenQuiz: () => void }) {
           marginBottom: 8,
         }}
       >
-        Personnalisez votre exploration
+        Affiner votre profil
       </div>
       <h3
         style={{
@@ -70,7 +70,7 @@ export function QuizLeadCard({ onOpenQuiz }: { onOpenQuiz: () => void }) {
       >
         {signalCount > 0
           ? `Vous avez exploré ${signalCount} œuvre${signalCount > 1 ? "s" : ""} — 3 questions pour affiner votre fil.`
-          : "3 questions pour que les œuvres et les galeries correspondent à votre sensibilité."}
+          : "Quelques questions pour que les œuvres et les galeries correspondent à votre sensibilité."}
       </p>
       <span
         style={{

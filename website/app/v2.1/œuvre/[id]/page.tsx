@@ -10,21 +10,15 @@ import { agentTheme } from "../../../../lib/agent-theme";
 const t = theme;
 const at = agentTheme;
 
-const ARTWORK_QUESTION_CHIPS = [
-  "Cette œuvre me correspond ?",
-  "Comment savoir si c'est le bon prix ?",
-  "Qu'est-ce que je ressentirais avec ça chez moi ?",
-];
-
 export default function ArtworkDetailPage() {
   const params = useParams();
   const router = useRouter();
   const id = Number(params.id);
   const artwork = V21_ARTWORKS.find((a) => a.id === id);
-  const { toggleSavedArtwork, isArtworkSaved, addImplicitSignal, setAgentContext, setAgentOpen, setAgentPreloadQuestion } = useAppStateV21();
+  const { toggleSavedArtwork, isArtworkSaved, addImplicitSignal, setAgentContext, setAgentOpen } = useAppStateV21();
   const saved = artwork ? isArtworkSaved(artwork.id) : false;
 
-  const openCurateurWithQuestion = (question: string) => {
+  const openCurateur = () => {
     if (!artwork) return;
     setAgentContext({
       screen: "artwork",
@@ -33,7 +27,6 @@ export default function ArtworkDetailPage() {
       entityType: "artwork",
       description: `${artwork.artist}, ${artwork.gallery}, ${artwork.price}`,
     });
-    setAgentPreloadQuestion(question);
     setAgentOpen(true);
   };
 
@@ -92,6 +85,23 @@ export default function ArtworkDetailPage() {
           {saved ? "♥" : "♡"}
         </button>
       </header>
+      {artwork.socialProof && (
+        <div style={{ padding: "12px 20px 0" }}>
+          <span
+            style={{
+              display: "inline-block",
+              padding: "6px 12px",
+              borderRadius: 999,
+              backgroundColor: t.colors.greenSoft,
+              color: t.colors.green,
+              fontFamily: t.fonts.sans,
+              fontSize: 12,
+            }}
+          >
+            ♡ {artwork.socialProof.saves} collectionneurs ont sauvegardé cette œuvre
+          </span>
+        </div>
+      )}
       <div style={{ aspectRatio: "3/4", position: "relative", display: "flex", flexWrap: "wrap" }}>
         {artwork.palette.map((color, i) => (
           <div
@@ -117,27 +127,6 @@ export default function ArtworkDetailPage() {
         <p style={{ fontSize: 14, color: t.colors.inkMuted, margin: "0 0 20px" }}>
           {artwork.gallery} · {artwork.price}
         </p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
-          {ARTWORK_QUESTION_CHIPS.map((q) => (
-            <button
-              key={q}
-              type="button"
-              onClick={() => openCurateurWithQuestion(q)}
-              style={{
-                padding: "8px 14px",
-                fontSize: 12,
-                fontFamily: at.fonts.sans,
-                color: at.colors.inkSoft,
-                background: at.colors.surface,
-                border: `1px solid ${at.colors.border}`,
-                borderRadius: 100,
-                cursor: "pointer",
-              }}
-            >
-              {q}
-            </button>
-          ))}
-        </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <Link
             href={`/v2.1/galerie/${artwork.galleryId}`}
@@ -157,22 +146,19 @@ export default function ArtworkDetailPage() {
           </Link>
           <button
             type="button"
-            onClick={() => openCurateurWithQuestion("")}
+            onClick={openCurateur}
             style={{
-              display: "block",
-              width: "100%",
-              padding: "16px 24px",
-              borderRadius: 12,
-              border: `1px solid ${at.colors.border}`,
-              color: t.colors.ink,
-              textAlign: "center",
-              fontSize: 15,
+              border: "none",
+              background: "none",
+              padding: 0,
               fontFamily: t.fonts.sans,
-              background: "transparent",
+              fontSize: 14,
+              color: at.colors.accent,
               cursor: "pointer",
+              textAlign: "center",
             }}
           >
-            En parler avec Curateur
+            ◈ En parler avec Curateur →
           </button>
         </div>
       </div>

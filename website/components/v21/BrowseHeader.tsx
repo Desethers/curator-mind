@@ -14,15 +14,14 @@ function identityToTwoWords(identity: string): string {
 }
 
 export function BrowseHeader({ onOpenQuiz }: { onOpenQuiz?: () => void }) {
-  const { collectorProfile, signalsUntilProfile } = useAppStateV21();
+  const { collectorProfile } = useAppStateV21();
   const profileComplete = collectorProfile.profileComplete;
   const identity = collectorProfile.identity;
-  const signalsLeft = signalsUntilProfile();
 
   const progressLabel =
     profileComplete && identity
       ? identityToTwoWords(identity)
-      : "Personnaliser mon profil";
+      : "Affiner mon profil";
 
   return (
     <div

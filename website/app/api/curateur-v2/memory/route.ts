@@ -26,7 +26,7 @@ Return ONLY JSON — add only NEW insights, do not repeat existing ones:
 {"newInsight": "string or null", "newMilestone": "string or null"}
 
 Example insights: 'Hésite toujours sur le prix', 'Attirée par les œuvres qui posent des questions', 'Peur d'entrer dans les galeries', 'Budget réel autour de 2 000€'
-Example milestones: 'A formulé sa première question sur un artiste', 'A admis vouloir acheter', 'Prêt pour une première visite galerie'`;
+Example milestones: 'A formulé sa première question sur un artiste', 'Prêt pour une première visite galerie', 'A exploré plusieurs galeries'`;
 
   const userContent = `User: ${lastUserMessage ?? ""}\nAssistant: ${lastAssistantMessage ?? ""}`;
 

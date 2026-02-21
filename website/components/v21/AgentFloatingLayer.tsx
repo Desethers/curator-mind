@@ -6,6 +6,7 @@ import type { Message } from "../../context/AppStateContextV21";
 import { useAgentContextV21 } from "../../hooks/useAgentContextV21";
 import { AgentFloatingBar } from "./AgentFloatingBar";
 import { AgentPanel } from "./AgentPanel";
+import { JourneyToast } from "./JourneyToast";
 import { agentTheme } from "../../lib/agent-theme";
 
 const at = agentTheme;
@@ -29,6 +30,7 @@ export function AgentFloatingLayer() {
     setAgentMemory,
     setSuggestedChips,
     setAgentPreloadQuestion,
+    setAgentPostVisitRitual,
     appendAgentMessage,
     updateAgentMessage,
   } = useAppStateV21();
@@ -106,6 +108,7 @@ export function AgentFloatingLayer() {
       const trimmed = text.trim();
       if (!trimmed || loading) return;
 
+      setAgentPostVisitRitual(false);
       setInputValue("");
       const userMsg: Message = {
         id: generateId(),
@@ -203,6 +206,7 @@ export function AgentFloatingLayer() {
       updateAgentMessage,
       setAgentMemory,
       fetchChips,
+      setAgentPostVisitRitual,
     ]
   );
 
@@ -233,6 +237,7 @@ export function AgentFloatingLayer() {
 
   return (
     <>
+      <JourneyToast />
       <AgentFloatingBar
         screen={screen}
         entityName={entityName}
@@ -261,16 +266,21 @@ export function AgentFloatingLayer() {
             }}
           />
           <div
-            ref={panelRef}
-            className="agent-panel-slide"
             style={{
               position: "fixed",
               left: 0,
               right: 0,
               bottom: 0,
+              display: "flex",
+              justifyContent: "center",
               zIndex: 1001,
             }}
           >
+            <div
+              ref={panelRef}
+              className="agent-panel-slide"
+              style={{ width: "100%", maxWidth: 430 }}
+            >
             <AgentPanel
               context={agent.currentContext}
               onDismissContext={() => setAgentContext(null)}
@@ -282,7 +292,9 @@ export function AgentFloatingLayer() {
               onInputChange={setInputValue}
               onSubmit={handlePanelSubmit}
               onDragDown={handleDragDown}
+              postVisitRitual={agent.postVisitRitual}
             />
+            </div>
           </div>
         </>
       )}
