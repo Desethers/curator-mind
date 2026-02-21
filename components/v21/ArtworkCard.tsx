@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { Artwork } from "../../lib/v21-artworks";
 import { useAppStateV21 } from "../../context/AppStateContextV21";
 import { theme } from "../../lib/theme";
@@ -133,26 +134,37 @@ export function ArtworkCard({
             aspectRatio: "3/4",
           }}
         >
-        {/* Palette color block */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            display: "flex",
-            flexWrap: "wrap",
-          }}
-        >
-          {artwork.palette.map((color, i) => (
-            <div
-              key={i}
-              style={{
-                width: "50%",
-                height: "50%",
-                backgroundColor: color,
-              }}
-            />
-          ))}
-        </div>
+        {/* Image ou palette */}
+        {artwork.image ? (
+          <Image
+            src={artwork.image}
+            alt=""
+            fill
+            sizes="(max-width: 430px) 100vw, 430px"
+            style={{ objectFit: "cover" }}
+            unoptimized
+          />
+        ) : (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              flexWrap: "wrap",
+            }}
+          >
+            {artwork.palette.map((color, i) => (
+              <div
+                key={i}
+                style={{
+                  width: "50%",
+                  height: "50%",
+                  backgroundColor: color,
+                }}
+              />
+            ))}
+          </div>
+        )}
         {/* Gradient overlay bottom */}
         <div
           style={{

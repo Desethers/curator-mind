@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { V21_ARTWORKS } from "../../../../lib/v21-artworks";
 import { useAppStateV21 } from "../../../../context/AppStateContextV21";
 import { theme } from "../../../../lib/theme";
@@ -102,13 +103,26 @@ export default function ArtworkDetailPage() {
           </span>
         </div>
       )}
-      <div style={{ aspectRatio: "3/4", position: "relative", display: "flex", flexWrap: "wrap" }}>
-        {artwork.palette.map((color, i) => (
-          <div
-            key={i}
-            style={{ width: "50%", height: "50%", backgroundColor: color }}
+      <div style={{ aspectRatio: "3/4", position: "relative", overflow: "hidden" }}>
+        {artwork.image ? (
+          <Image
+            src={artwork.image}
+            alt=""
+            fill
+            sizes="(max-width: 430px) 100vw, 430px"
+            style={{ objectFit: "cover" }}
+            unoptimized
           />
-        ))}
+        ) : (
+          <div style={{ display: "flex", flexWrap: "wrap", width: "100%", height: "100%" }}>
+            {artwork.palette.map((color, i) => (
+              <div
+                key={i}
+                style={{ width: "50%", height: "50%", backgroundColor: color }}
+              />
+            ))}
+          </div>
+        )}
       </div>
       <div style={{ padding: "20px 20px 24px" }}>
         <h1

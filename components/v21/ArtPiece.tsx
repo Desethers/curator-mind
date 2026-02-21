@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { Artwork } from "../../lib/v21-artworks";
 
 export function ArtPiece({
@@ -38,18 +39,31 @@ export function ArtPiece({
           height: "100%",
           display: "flex",
           flexWrap: "wrap",
+          position: "relative",
+          overflow: "hidden",
         }}
       >
-        {artwork.palette.map((color, i) => (
-          <div
-            key={i}
-            style={{
-              width: "50%",
-              height: "50%",
-              backgroundColor: color,
-            }}
+        {artwork.image ? (
+          <Image
+            src={artwork.image}
+            alt=""
+            fill
+            sizes="280px"
+            style={{ objectFit: "cover" }}
+            unoptimized
           />
-        ))}
+        ) : (
+          artwork.palette.map((color, i) => (
+            <div
+              key={i}
+              style={{
+                width: "50%",
+                height: "50%",
+                backgroundColor: color,
+              }}
+            />
+          ))
+        )}
       </div>
     </button>
   );
