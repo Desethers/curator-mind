@@ -6,7 +6,7 @@
 
 ## Design tokens (site principal & v2.1)
 
-Source : `website/lib/theme.ts`. Utiliser ces tokens pour tout nouveau composant (couleurs, polices, espacements, rayons).
+Source : `lib/theme.ts`. Utiliser ces tokens pour tout nouveau composant (couleurs, polices, espacements, rayons).
 
 ### Couleurs
 | Token | Valeur | Usage |
@@ -109,9 +109,9 @@ Source : `website/lib/theme.ts`. Utiliser ces tokens pour tout nouveau composant
 
 ## Fichiers à utiliser
 
-- **Tokens** : `website/lib/theme.ts` — importer `theme` et utiliser `theme.colors.xxx`, `theme.fonts.xxx`, etc.
-- **Layout site** : `website/styles/v21.css` (v2.1) ou `website/styles/v2.css` (v2) — classes `.v21-app` / `.v21-main` ou `.v2-app` / `.v2-main`.
-- **Thème sombre (si besoin)** : `website/lib/v2-theme.ts` — `v2Theme` (bg #0C0B0A, surface #141312, ink #F2EDE8, accent #D4A07A).
+- **Tokens** : `lib/theme.ts` — importer `theme` et utiliser `theme.colors.xxx`, `theme.fonts.xxx`, etc.
+- **Layout site** : `styles/v21.css` (v2.1) ou `styles/v2.css` (v2) — classes `.v21-app` / `.v21-main` ou `.v2-app` / `.v2-main`.
+- **Thème sombre (si besoin)** : `lib/v2-theme.ts` — `v2Theme` (bg #0C0B0A, surface #141312, ink #F2EDE8, accent #D4A07A).
 
 ---
 
