@@ -46,12 +46,21 @@ export default function BrowsePage() {
       <BrowseHeader onOpenQuiz={openQuiz} />
       <ExplorerSearchBar onOpenQuiz={openQuiz} />
       <CollectorThread />
-      <div style={{ paddingBottom: 24 }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 12,
+          paddingBottom: 24,
+        }}
+      >
         {sortedArtworks.map((artwork, index) => (
           <div key={artwork.id}>
-            <ArtworkCard artwork={artwork} />
+            <ArtworkCard artwork={artwork} rounded />
             {index === QUIZ_LEAD_AFTER_INDEX && (
-              <QuizLeadCard onOpenQuiz={openQuiz} />
+              <div style={{ gridColumn: "1 / -1" }}>
+                <QuizLeadCard onOpenQuiz={openQuiz} />
+              </div>
             )}
           </div>
         ))}

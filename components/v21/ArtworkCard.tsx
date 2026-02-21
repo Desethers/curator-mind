@@ -16,9 +16,11 @@ const LONG_PRESS_MS = 500;
 export function ArtworkCard({
   artwork,
   onDwellRecorded,
+  rounded = false,
 }: {
   artwork: Artwork;
   onDwellRecorded?: (artworkId: number) => void;
+  rounded?: boolean;
 }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [dwellRecorded, setDwellRecorded] = useState(false);
@@ -128,7 +130,7 @@ export function ArtworkCard({
           onTouchCancel={endLongPress}
           style={{
             width: "100%",
-            borderRadius: 0,
+            borderRadius: rounded ? 16 : 0,
             overflow: "hidden",
             position: "relative",
             aspectRatio: "3/4",
