@@ -19,9 +19,8 @@ export default function AboutPage() {
             CURATOR MIND
           </Link>
           <nav style={{ display: "flex", gap: 16, fontSize: 14 }}>
-            <Link href="/experience">Expérience</Link>
-            <Link href="/artists">Artistes</Link>
-            <Link href="/about">À propos</Link>
+            <Link href="/selection" style={{ color: theme.colors.inkSoft }}>Œuvres</Link>
+            <Link href="/collection" style={{ color: theme.colors.inkSoft }}>Ma collection</Link>
           </nav>
         </header>
 

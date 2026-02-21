@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { theme } from "../lib/theme";
-import { QuizCard } from "../components/QuizCard";
+import { QuizSection } from "../components/QuizSection";
 
 export default function HomePage() {
   return (
     <main
       style={{
         minHeight: "100vh",
-        backgroundColor: "#fafafa",
+        backgroundColor: "#FFFFFF",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -31,10 +31,23 @@ export default function HomePage() {
           <Link href="/" style={{ fontWeight: 700, letterSpacing: 2, color: theme.colors.ink }}>
             CURATOR MIND
           </Link>
-          <nav style={{ display: "flex", gap: 16, fontSize: 14 }}>
-            <Link href="/experience" style={{ color: theme.colors.inkSoft }}>Expérience</Link>
-            <Link href="/artists" style={{ color: theme.colors.inkSoft }}>Artistes</Link>
-            <Link href="/about" style={{ color: theme.colors.inkSoft }}>À propos</Link>
+          <nav style={{ display: "flex", gap: 16, fontSize: 14, alignItems: "center" }}>
+            <Link href="/selection" style={{ color: theme.colors.inkSoft }}>Œuvres</Link>
+            <Link href="/collection" style={{ color: theme.colors.inkSoft }}>Ma collection</Link>
+            <Link
+              href="/experience"
+              style={{
+                color: "#F2EDE8",
+                backgroundColor: "#0C0B0A",
+                padding: "7px 16px",
+                borderRadius: 999,
+                fontWeight: 500,
+                letterSpacing: "0.02em",
+                fontSize: 13,
+              }}
+            >
+              Curateur →
+            </Link>
           </nav>
         </header>
 
@@ -57,7 +70,52 @@ export default function HomePage() {
           >
             Prêt à acheter une œuvre ? Trouvez celle qui vous correspond.
           </p>
-          <QuizCard />
+          <QuizSection />
+
+          <div style={{ marginTop: 48, width: "100%", maxWidth: 640 }}>
+            <Link
+              href="/experience"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                backgroundColor: "#0C0B0A",
+                borderRadius: 20,
+                padding: "28px 32px",
+                textDecoration: "none",
+              }}
+            >
+              <div>
+                <p style={{
+                  fontFamily: theme.fonts.serif,
+                  fontStyle: "italic",
+                  fontSize: 22,
+                  color: "#F2EDE8",
+                  margin: 0,
+                  marginBottom: 6,
+                  lineHeight: 1.3,
+                }}>
+                  Rencontrez votre conseiller
+                </p>
+                <p style={{
+                  fontSize: 13,
+                  color: "rgba(242, 237, 232, 0.45)",
+                  margin: 0,
+                  letterSpacing: "0.04em",
+                }}>
+                  Une conversation pour nommer ce que vous cherchez
+                </p>
+              </div>
+              <span style={{
+                fontFamily: theme.fonts.serif,
+                fontStyle: "italic",
+                fontSize: 28,
+                color: "#D4A07A",
+                marginLeft: 24,
+                flexShrink: 0,
+              }}>→</span>
+            </Link>
+          </div>
         </section>
       </div>
     </main>

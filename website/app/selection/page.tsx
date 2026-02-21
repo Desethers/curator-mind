@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { theme } from "../../lib/theme";
 import { WorksGrid } from "../../components/WorksGrid";
+import { SelectionHeader } from "../../components/SelectionHeader";
 
 export default function SelectionPage() {
   return (
@@ -20,24 +21,12 @@ export default function SelectionPage() {
             CURATOR MIND
           </Link>
           <nav style={{ display: "flex", gap: 16, fontSize: 14 }}>
-            <Link href="/experience">Expérience</Link>
-            <Link href="/artists">Artistes</Link>
-            <Link href="/about">À propos</Link>
+            <Link href="/selection" style={{ color: theme.colors.ink }}>Œuvres</Link>
+            <Link href="/collection" style={{ color: theme.colors.inkSoft }}>Ma collection</Link>
           </nav>
         </header>
 
-        <section style={{ marginBottom: 12 }}>
-          <p style={{ fontSize: 13, letterSpacing: 3, textTransform: "uppercase", color: theme.colors.inkMuted, marginBottom: 10 }}>
-            Sélection d&apos;œuvres
-          </p>
-          <h1 style={{ fontSize: 30, lineHeight: 1.2, marginBottom: 10, color: theme.colors.ink }}>
-            Une première proposition construite à partir de vos réponses.
-          </h1>
-          <p style={{ fontSize: 15, lineHeight: 1.5, color: theme.colors.inkSoft }}>
-            Voici un exemple de grille telle que pourrait la générer Curator Mind après le quizz. Les œuvres sont illustratives : dans la
-            version produit, elles seraient reliées à de vrais artistes et à votre profil.
-          </p>
-        </section>
+        <SelectionHeader />
 
         <WorksGrid />
       </div>

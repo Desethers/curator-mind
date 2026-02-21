@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { theme } from "../lib/theme";
+import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAppState } from "../../context/AppStateContext";
+import { theme } from "../../lib/theme";
 
 const STEPS = [
   {
@@ -41,70 +43,46 @@ const GREY_PILL = "#f7f7f7";
 const GREY_BAR_BG = "#f0f0f0";
 const GREY_BORDER = "rgba(0,0,0,0.08)";
 const PILL_RADIUS = 28;
+const AUTO_ADVANCE_MS = 300;
 
-export type QuizAnswers = Record<1 | 2 | 3, string | null>;
-
-export function QuizCard({
-  onComplete,
-}: {
-  onComplete?: (answers: QuizAnswers, identity: string, keywords: string[]) => void;
-}) {
+export function V2QuizScreen() {
+  const router = useRouter();
+  const { setQuizAnswers } = useAppState();
   const [step, setStep] = useState<1 | 2 | 3>(1);
-  const [answers, setAnswers] = useState<QuizAnswers>({
+  const [answers, setAnswers] = useState<Record<1 | 2 | 3, string | null>>({
     1: null,
     2: null,
     3: null,
   });
-  const [loading, setLoading] = useState(false);
-  const currentStepIndex = step - 1;
-  const current = STEPS[currentStepIndex];
+  const [slideOut, setSlideOut] = useState(false);
+
+  const current = STEPS[step - 1];
   const isLastStep = step === 3;
-  const canRechercher =
-    answers[1] && answers[2] && answers[3];
 
-  const handlePick = (option: string) => {
-    setAnswers((prev) => ({ ...prev, [step]: option }));
-    if (!isLastStep) {
-      setStep((prev) => (prev + 1) as 1 | 2 | 3);
-    }
-  };
-
-  const handleRechercher = () => {
-    if (!canRechercher || loading) return;
-    setLoading(true);
-    const a = [answers[1], answers[2], answers[3]] as [string, string, string];
-    fetch("/api/collector-identity", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers: a }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        const identity = (data.identity || "Vous collectionnez l'inattendu.").trim();
-        const keywords = Array.isArray(data.keywords) ? data.keywords : [];
-        onComplete?.(answers, identity, keywords);
-      })
-      .catch(() => {
-        onComplete?.(
-          answers,
-          "Vous collectionnez l'inattendu.",
-          ["contemporain", "émergent", "singulier"]
-        );
-      })
-      .finally(() => setLoading(false));
-  };
+  const handlePick = useCallback(
+    (option: string) => {
+      setAnswers((prev) => ({ ...prev, [step]: option }));
+      if (!isLastStep) {
+        setSlideOut(true);
+        setTimeout(() => {
+          setStep((prev) => (prev + 1) as 1 | 2 | 3);
+          setSlideOut(false);
+        }, AUTO_ADVANCE_MS);
+      } else {
+        setSlideOut(true);
+        setTimeout(() => {
+          const arr = [answers[1], answers[2], option].filter(Boolean) as string[];
+          setQuizAnswers(arr);
+          router.push("/v2/interstitial");
+        }, AUTO_ADVANCE_MS);
+      }
+    },
+    [step, isLastStep, answers, setQuizAnswers, router]
+  );
 
   return (
-    <div
-      style={{
-        width: "100%",
-        maxWidth: 640,
-        display: "flex",
-        flexDirection: "column",
-        gap: 12,
-      }}
-    >
-      {/* Barre en pilule : fond gris + indicateur blanc qui glisse */}
+    <div style={{ width: "100%", maxWidth: 640 }}>
+      {/* Barre en pilule — style du site */}
       <div
         style={{
           display: "flex",
@@ -113,6 +91,7 @@ export function QuizCard({
           borderRadius: PILL_RADIUS,
           overflow: "hidden",
           height: 60,
+          marginBottom: 12,
         }}
       >
         <div style={{ flex: 1, display: "flex", minWidth: 0 }}>
@@ -160,31 +139,6 @@ export function QuizCard({
             );
           })}
         </div>
-        <button
-          type="button"
-          onClick={handleRechercher}
-          disabled={!canRechercher || loading}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 8,
-            padding: "0 24px",
-            height: 50,
-            margin: "5px 0",
-            backgroundImage: "linear-gradient(90deg, #FF385C, #E61E4D)",
-            color: theme.colors.white,
-            border: "none",
-            cursor: canRechercher && !loading ? "pointer" : "not-allowed",
-            fontSize: 14,
-            fontWeight: 600,
-            borderRadius: "9999px",
-            outline: "none",
-            opacity: canRechercher ? 1 : 0.6,
-          }}
-        >
-          <span>{loading ? "..." : "Rechercher"}</span>
-        </button>
       </div>
 
       {/* Carré arrondi : question + réponses */}
@@ -196,6 +150,9 @@ export function QuizCard({
           border: `1px solid ${GREY_BORDER}`,
           padding: 28,
           minHeight: 260,
+          opacity: slideOut ? 0 : 1,
+          transform: slideOut ? "translateX(-12px)" : "translateX(0)",
+          transition: "opacity 0.25s, transform 0.25s",
         }}
       >
         <h2
@@ -242,7 +199,7 @@ export function QuizCard({
               marginTop: 16,
             }}
           >
-            Cliquez sur une option pour voir votre sélection.
+            Cliquez sur une option pour accéder à votre profil.
           </p>
         )}
       </div>

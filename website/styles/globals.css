@@ -1,3 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --color-curateur-bg: #0C0B0A;
+  --color-curateur-text: #F2EDE8;
+  --color-curateur-accent: #D4A07A;
+}
+
 *,
 *::before,
 *::after {
@@ -23,3 +35,154 @@ body {
   color: #201a15;
   background-color: rgba(255, 255, 255, 0.85);
 }
+
+/* Curateur animations */
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes crystallize {
+  0% {
+    opacity: 0;
+    transform: scale(0.97);
+    box-shadow: 0 0 0 0 rgba(212, 160, 122, 0);
+  }
+  35% {
+    opacity: 1;
+    transform: scale(1.015);
+    box-shadow: 0 0 0 8px rgba(212, 160, 122, 0.18);
+  }
+  65% {
+    box-shadow: 0 0 0 16px rgba(212, 160, 122, 0.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 28px rgba(212, 160, 122, 0);
+  }
+}
+
+@keyframes profileBannerIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes chipIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes notesSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes savedPulse {
+  0% { opacity: 0; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Hide scrollbar in curateur chat */
+.curateur-messages::-webkit-scrollbar {
+  display: none;
+}
+.curateur-messages {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Chip hover states */
+.curateur-chip:hover:not(:disabled) {
+  background-color: rgba(242, 237, 232, 0.09) !important;
+  border-color: rgba(242, 237, 232, 0.22) !important;
+  color: rgba(242, 237, 232, 0.9) !important;
+}
+
+/* Agent message tap area hover */
+.agent-message-btn:hover .agent-message-text {
+  color: #F2EDE8 !important;
+}
+
+.agent-message-btn:hover .save-hint {
+  opacity: 1 !important;
+}
+
+/* Input placeholder color */
+.curateur-input::placeholder {
+  color: rgba(242, 237, 232, 0.25);
+}
+
+/* Quiz: step slide + option stagger + interstitial fade */
+@keyframes quizSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes quizSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+}
+
+@keyframes quizOptionIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes quizFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
