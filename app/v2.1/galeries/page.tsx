@@ -1,16 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAppStateV21 } from "../../../context/AppStateContextV21";
-import { V2_GALLERIES, V2_GALLERY_IDS } from "../../../lib/v2-galleries";
+import { PARIS_GALLERIES_PGMAP } from "../../../lib/paris-galleries-pgmap";
 import { theme } from "../../../lib/theme";
+import { V2_GALLERIES } from "../../../lib/v2-galleries";
 
 const t = theme;
 
+function getExhibitionForGalleryName(name: string): string | null {
+  const v2 = Object.values(V2_GALLERIES).find(
+    (g) => g.name === name || g.name.endsWith(" " + name)
+  );
+  return v2?.exhibition ?? null;
+}
+
 export default function GaleriesPage() {
   const router = useRouter();
-  const { collectorProfile, savedGalleries } = useAppStateV21();
+  const { collectorProfile } = useAppStateV21();
 
   return (
     <div style={{ paddingBottom: 24 }}>
@@ -60,52 +67,42 @@ export default function GaleriesPage() {
           {collectorProfile.bridge}
         </p>
       )}
-      <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12 }}>
-        {V2_GALLERY_IDS.map((id) => {
-          const g = V2_GALLERIES[id];
-          const isSaved = savedGalleries.some((s) => s.id === g.id);
+      <p
+        style={{
+          padding: "16px 20px 0",
+          fontSize: 12,
+          color: t.colors.inkMuted,
+          margin: 0,
+        }}
+      >
+        Paris Gallery Map — A→Z
+      </p>
+      <div style={{ padding: "12px 20px 24px", display: "flex", flexDirection: "column", gap: 8 }}>
+        {PARIS_GALLERIES_PGMAP.map((name) => {
+          const exhibition = getExhibitionForGalleryName(name);
           return (
-            <Link
-              key={g.id}
-              href={`/v2.1/galerie/${g.id}`}
+            <div
+              key={name}
               style={{
-                display: "block",
-                padding: 20,
-                borderRadius: 16,
+                padding: "14px 16px",
+                borderRadius: 12,
                 backgroundColor: t.colors.surface,
-                border: `1px solid ${t.colors.accentBorder}`,
-                textDecoration: "none",
-                color: "inherit",
+                border: `1px solid ${t.colors.border}`,
+                color: t.colors.ink,
+                fontFamily: t.fonts.sans,
+                fontSize: 15,
+                display: "flex",
+                flexDirection: "column",
+                gap: 4,
               }}
             >
-              <span
-                style={{
-                  fontSize: 10,
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  color: t.colors.inkMuted,
-                }}
-              >
-                {g.neighborhood}
-              </span>
-              <div
-                style={{
-                  fontWeight: 600,
-                  fontSize: 17,
-                  color: t.colors.ink,
-                  marginTop: 4,
-                  marginBottom: 4,
-                }}
-              >
-                {g.name}
-              </div>
-              <p style={{ margin: 0, fontSize: 14, color: t.colors.inkSoft, lineHeight: 1.4 }}>
-                {g.exhibition}
-              </p>
-              <p style={{ margin: "8px 0 0", fontSize: 13, color: t.colors.inkMuted }}>
-                {g.matchReason}
-              </p>
-            </Link>
+              <span style={{ fontWeight: 600 }}>{name}</span>
+              {exhibition && (
+                <span style={{ fontSize: 13, color: t.colors.inkSoft }}>
+                  {exhibition}
+                </span>
+              )}
+            </div>
           );
         })}
       </div>

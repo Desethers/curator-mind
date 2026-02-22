@@ -1,24 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useAppStateV21 } from "../../context/AppStateContextV21";
 import { theme } from "../../lib/theme";
 
 const t = theme;
 
-function identityToTwoWords(identity: string): string {
-  const match = identity.match(/Vous collectionnez (.+?)\.?$/i);
-  const part = match ? match[1].trim() : identity.trim();
-  const words = part.split(/\s+/).filter(Boolean);
-  if (words.length <= 2) return part;
-  return words.slice(-2).join(" ");
-}
-
 export function ExplorerSearchBar({ onOpenQuiz }: { onOpenQuiz: () => void }) {
-  const { collectorProfile } = useAppStateV21();
-  const profileComplete = collectorProfile.profileComplete;
-  const identity = collectorProfile.identity;
-
   return (
     <div
       style={{
@@ -61,18 +48,18 @@ export function ExplorerSearchBar({ onOpenQuiz }: { onOpenQuiz: () => void }) {
         </div>
       </Link>
 
-      <button
-        type="button"
-        onClick={onOpenQuiz}
+      <Link
+        href="/v2.1/search"
         style={{
           flex: 1,
           minWidth: 0,
           padding: "16px 20px",
-          border: "none",
-          background: profileComplete ? t.colors.accentSoft : "transparent",
-          cursor: "pointer",
-          textAlign: "left",
-          font: "inherit",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          textDecoration: "none",
+          color: "inherit",
+          background: "transparent",
         }}
       >
         <div
@@ -80,24 +67,16 @@ export function ExplorerSearchBar({ onOpenQuiz }: { onOpenQuiz: () => void }) {
             fontSize: 10,
             letterSpacing: "0.08em",
             textTransform: "uppercase",
-            color: profileComplete ? t.colors.accent : t.colors.inkMuted,
+            color: t.colors.inkMuted,
             marginBottom: 4,
           }}
         >
-          Votre profil
+          Recherche
         </div>
-        <div
-          style={{
-            fontSize: 15,
-            fontWeight: 500,
-            color: profileComplete ? t.colors.accent : t.colors.ink,
-          }}
-        >
-          {profileComplete && identity
-            ? identityToTwoWords(identity)
-            : "Affiner mon profil"}
+        <div style={{ fontSize: 15, fontWeight: 500, color: t.colors.ink }}>
+          Rechercher
         </div>
-      </button>
+      </Link>
     </div>
   );
 }

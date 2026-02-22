@@ -7,11 +7,10 @@ import { theme } from "../../lib/theme";
 export function V21Header() {
   const pathname = usePathname();
   const isBrowse = pathname === "/v2.1" || pathname === "/v2.1/browse";
+  const isSearch = pathname === "/v2.1/search";
   const isGaleries = pathname === "/v2.1/galeries";
   const isCurateur = pathname?.startsWith("/v2.1/curateur");
   const isCollection = pathname === "/v2.1/collection";
-  const isProfil = pathname === "/v2.1/profil";
-
   return (
     <header
       style={{
@@ -42,7 +41,25 @@ export function V21Header() {
             textDecoration: "none",
           }}
         >
-          Explorer
+          Découvrir
+        </Link>
+        <Link
+          href="/v2.1/search"
+          style={{
+            color: isSearch ? theme.colors.ink : theme.colors.inkSoft,
+            textDecoration: "none",
+          }}
+        >
+          Recherche
+        </Link>
+        <Link
+          href="/v2.1/curateur"
+          style={{
+            color: isCurateur ? theme.colors.ink : theme.colors.inkSoft,
+            textDecoration: "none",
+          }}
+        >
+          Art advisor
         </Link>
         <Link
           href="/v2.1/galeries"
@@ -56,29 +73,18 @@ export function V21Header() {
         <Link
           href="/v2.1/collection"
           style={{
-            color: isCollection ? theme.colors.ink : theme.colors.inkSoft,
+            padding: "8px 14px",
+            borderRadius: 999,
+            border: `1px solid ${theme.colors.accentBorder}`,
+            backgroundColor: isCollection ? theme.colors.accentSoft : "transparent",
+            color: theme.colors.accent,
+            fontFamily: theme.fonts.sans,
+            fontSize: 12,
+            fontWeight: 600,
             textDecoration: "none",
           }}
         >
-          Collection
-        </Link>
-        <Link
-          href="/v2.1/curateur"
-          style={{
-            color: isCurateur ? theme.colors.ink : theme.colors.inkSoft,
-            textDecoration: "none",
-          }}
-        >
-          Curateur
-        </Link>
-        <Link
-          href="/v2.1/profil"
-          style={{
-            color: isProfil ? theme.colors.ink : theme.colors.inkSoft,
-            textDecoration: "none",
-          }}
-        >
-          Profil
+          Ma collection
         </Link>
       </nav>
     </header>
