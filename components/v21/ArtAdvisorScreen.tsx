@@ -157,6 +157,9 @@ export default function ArtAdvisorScreen() {
         backgroundColor: at.colors.bg,
         fontFamily: at.fonts.sans,
         color: at.colors.ink,
+        width: "100%",
+        maxWidth: 480,
+        margin: "0 auto",
       }}
     >
       <header
